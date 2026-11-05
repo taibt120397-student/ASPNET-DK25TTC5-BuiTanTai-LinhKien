@@ -57,8 +57,7 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them model, DbContext
 
 ## 5. Khó khăn và cách giải quyết
 
-- \[Ghi khó khăn thực tế gặp phải trong tuần và cách xử lý, ví dụ: lỗi kết nối SQL Server, lỗi khi chạy migration...\]
-- \[Nếu không có khó khăn đáng kể, ghi: "Không phát sinh khó khăn đáng kể."\]
+- Không phát sinh khó khăn đáng kể
 
 ## 6. Kế hoạch tuần 2 (09/11 – 15/11)
 
