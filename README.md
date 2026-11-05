@@ -6,7 +6,7 @@
 | :---- | :---- |
 | MSSV | 170125376 |
 | Lớp | DK25TTC5 |
-| Giảng viên hướng dẫn | \[Họ tên GV\] |
+| Giảng viên hướng dẫn | TS. Nguyễn Nhứt Lam |
 | Hạn hoàn thành | 13/12/2026 |
 | Email liên hệ | [taibt120397@tvu-onschool.edu.vn](mailto:taibt120397@tvu-onschool.edu.vn) |
 | Điện thoại | 0395917248 |
