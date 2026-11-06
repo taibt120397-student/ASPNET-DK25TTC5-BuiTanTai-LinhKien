@@ -50,7 +50,7 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them model, DbContext
 - [x] Đăng nhập được bằng tài khoản Admin
 - [x] Mở SQL Server Management Studio thấy đủ các bảng, tên bảng đúng như đề cương
 
-**Hình ảnh minh chứng** (chèn ảnh vào thư mục `docs/` rồi thay đường dẫn):
+**Hình ảnh minh chứng** :
 
 - Danh sách bảng trong SSMS: `docs/tuan01-ssms-tables.png`
 - Đăng nhập thành công bằng tài khoản Admin: `docs/tuan01-login-admin.png`
@@ -68,4 +68,4 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them model, DbContext
 
 ## 7. Nhận xét của giảng viên
 
-\[Giảng viên ghi nhận xét tại đây\]
+
