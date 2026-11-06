@@ -23,7 +23,7 @@ Khởi tạo dự án, hoàn thiện mô hình dữ liệu và cấu hình đăn
 | STT | Công việc | Kết quả | Trạng thái |
 | :---- | :---- | :---- | :---- |
 | 1 | Chuẩn bị môi trường | Cài đặt Visual Studio và SQL Server (hoàn tất ngày 04/11), tạo repository GitHub theo cấu trúc quy định | Hoàn thành |
-| 2 | Chốt đề cương, use case, ERD | Xác nhận lại danh sách bảng và cột để hạn chế phải đổi migration ở các tuần sau. ERD rút gọn lưu tại `docs/erd.png` | Hoàn thành |
+| 2 | Chốt đề cương, use case, ERD | Xác nhận lại danh sách bảng và cột để hạn chế phải đổi migration ở các tuần sau. ERD lưu tại `docs/erd.png` | Hoàn thành |
 | 3 | Tạo các entity | `ApplicationUser` (kế thừa `IdentityUser`, thêm `HoTen`), `DanhMuc`, `ThuongHieu`, `SanPham`, `ThongSoKyThuat`, `GioHang`, `ChiTietGioHang`, `DiaChiGiaoHang`, `MaGiamGia`, `DonHang`, `ChiTietDonHang`, `DanhGia`, `NhatKyThaoTac`; lớp hằng số `TrangThaiDon` cho trạng thái đơn hàng | Hoàn thành |
 | 4 | Tạo `AppDbContext` | Khai báo các `DbSet`, đặt tên bảng theo đề cương, cấu hình độ chính xác cho các cột tiền, chỉ mục và ràng buộc khóa ngoại | Hoàn thành |
 | 5 | Cấu hình `Program.cs` | Đăng ký `DbContext`, Identity (có vai trò), MVC và Razor Pages (giao diện đăng nhập, đăng ký của Identity) | Hoàn thành |
