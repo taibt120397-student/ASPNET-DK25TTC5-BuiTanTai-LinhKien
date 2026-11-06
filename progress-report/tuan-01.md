@@ -60,7 +60,7 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them model, DbContext
 - Đăng nhập thành công bằng tài khoản Admin: <p align="center">
   <img src="../docs/tuan01-login-admin.png" alt="Dang nhap thanh cong admin" width="720">
   <br>
-  <em>Hình 1. Đăng nhập thành công</em>
+  <em>Hình 2. Đăng nhập thành công</em>
 </p>
 
 ## 5. Khó khăn và cách giải quyết
