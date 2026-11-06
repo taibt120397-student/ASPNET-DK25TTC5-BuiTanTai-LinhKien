@@ -52,8 +52,16 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them model, DbContext
 
 **Hình ảnh minh chứng** :
 
-- Danh sách bảng trong SSMS: `docs/tuan01-ssms-tables.png`
-- Đăng nhập thành công bằng tài khoản Admin: `docs/tuan01-login-admin.png`
+- Danh sách bảng trong SSMS: <p align="center">
+  <img src="docs/tuan01-ssms-tables.png" alt="Danh sách bảng DB" width="720">
+  <br>
+  <em>Hình 1. Danh sách bảng DB</em>
+</p>
+- Đăng nhập thành công bằng tài khoản Admin: <p align="center">
+  <img src="docs/tuan01-login-admin.png" alt="Dang nhap thanh cong admin" width="720">
+  <br>
+  <em>Hình 1. Đăng nhập thành công</em>
+</p>
 
 ## 5. Khó khăn và cách giải quyết
 
