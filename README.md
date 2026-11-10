@@ -229,7 +229,7 @@ Danh sách bảng chính: `DanhMuc`, `ThuongHieu`, `SanPham`, `ThongSoKyThuat`, 
 | Tuần | Thời gian | Nội dung | Trạng thái |
 | :---- | :---- | :---- | :---- |
 | 1 | 02/11 – 08/11 | Đề cương, use case, ERD, khởi tạo project, Identity, migration | Đã hoàn thành |
-| 2 | 09/11 – 15/11 | Danh mục, sản phẩm, upload ảnh, phân quyền | ☐ |
+| 2 | 09/11 – 15/11 | Danh mục, sản phẩm, upload ảnh, phân quyền | Đã hoàn thành |
 | 3 | 16/11 – 22/11 | Tìm kiếm, lọc, chi tiết sản phẩm, giỏ hàng | ☐ |
 | 4 | 23/11 – 29/11 | Đặt hàng, thanh toán, mã giảm giá, quản lý đơn | ☐ |
 | 5 | 30/11 – 06/12 | Đánh giá, báo cáo, nhật ký, kiểm thử | ☐ |
