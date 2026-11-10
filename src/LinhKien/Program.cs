@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+	builder.Services.AddScoped<LinhKien.Services.IImageService, LinhKien.Services.ImageService>();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(o =>
 {
@@ -41,5 +42,9 @@ app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
     await SeedData.InitAsync(scope.ServiceProvider);
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await LinhKien.Data.CatalogSeeder.SeedAsync(db);
+}
 app.Run();

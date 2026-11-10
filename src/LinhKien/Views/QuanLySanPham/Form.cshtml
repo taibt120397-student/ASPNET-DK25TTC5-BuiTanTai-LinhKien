@@ -1,0 +1,190 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model LinhKien.ViewModels.SanPhamFormVM
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm sản phẩm" : "Sửa sản phẩm";
+    var dmList = (List<SelectListItem>)ViewBag.DanhMucList;
+    var thList = (List<SelectListItem>)ViewBag.ThuongHieuList;
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+<form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.Id)"
+      method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="RowVersion" />
+    <input type="hidden" asp-for="HinhAnh" />
+
+    <div class="row g-4">
+        <!-- Cột trái: thông tin chính -->
+        <div class="col-lg-8">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="MaSP" class="form-label"></label>
+                    <input asp-for="MaSP" class="form-control" readonly />
+                </div>
+                <div class="col-md-8">
+                    <label asp-for="TenSP" class="form-label"></label>
+                    <input asp-for="TenSP" class="form-control" autofocus />
+                    <span asp-validation-for="TenSP" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="DanhMucId" class="form-label"></label>
+                    <select asp-for="DanhMucId" asp-items="dmList" class="form-select">
+                        <option value="">— Chọn danh mục —</option>
+                    </select>
+                    <span asp-validation-for="DanhMucId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ThuongHieuId" class="form-label"></label>
+                    <select asp-for="ThuongHieuId" asp-items="thList" class="form-select">
+                        <option value="">— Chọn thương hiệu —</option>
+                    </select>
+                    <span asp-validation-for="ThuongHieuId" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Gia" class="form-label"></label>
+                    <input asp-for="Gia" type="number" min="1" step="1" class="form-control" />
+                    <span asp-validation-for="Gia" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="GiaKhuyenMai" class="form-label"></label>
+                    <input asp-for="GiaKhuyenMai" type="number" min="0" step="1" class="form-control" placeholder="Để trống nếu không khuyến mãi" />
+                    <span asp-validation-for="GiaKhuyenMai" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="SoLuongTon" class="form-label"></label>
+                    <input asp-for="SoLuongTon" type="number" min="0" class="form-control" />
+                    <span asp-validation-for="SoLuongTon" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="MucTonToiThieu" class="form-label"></label>
+                    <input asp-for="MucTonToiThieu" type="number" min="0" class="form-control" />
+                    <span asp-validation-for="MucTonToiThieu" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Slug" class="form-label"></label>
+                    <input asp-for="Slug" class="form-control" />
+                    <span asp-validation-for="Slug" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="DatasheetUrl" class="form-label"></label>
+                    <input asp-for="DatasheetUrl" class="form-control" placeholder="https://..." />
+                    <span asp-validation-for="DatasheetUrl" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="MoTa" class="form-label"></label>
+                    <textarea asp-for="MoTa" rows="5" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột phải: ảnh + trạng thái -->
+        <div class="col-lg-4">
+            <label asp-for="Anh" class="form-label"></label>
+            <div class="border rounded p-2 mb-2 text-center bg-light">
+                <img id="imgPreview" src="@Model.HinhAnh" alt="Ảnh sản phẩm"
+                     class="img-fluid rounded @(string.IsNullOrEmpty(Model.HinhAnh) ? "d-none" : "")" style="max-height:220px" />
+                <div id="imgEmpty" class="text-muted py-5 @(string.IsNullOrEmpty(Model.HinhAnh) ? "" : "d-none")">Chưa có ảnh</div>
+            </div>
+            <input asp-for="Anh" type="file" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
+            <div class="form-text">JPG, PNG, WEBP, tối đa 2 MB. @(isNew ? "" : "Chọn ảnh mới để thay ảnh hiện tại.")</div>
+            <span asp-validation-for="Anh" class="text-danger"></span>
+
+            <div class="form-check mt-4">
+                <input asp-for="NgungBan" class="form-check-input" />
+                <label asp-for="NgungBan" class="form-check-label"></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông số kỹ thuật -->
+    <h2 class="h5 mt-4">Thông số kỹ thuật</h2>
+    <datalist id="dlTenThongSo">
+        <option value="Điện áp hoạt động"></option>
+        <option value="Dòng điện tiêu thụ"></option>
+        <option value="Xung nhịp"></option>
+        <option value="Bộ nhớ Flash"></option>
+        <option value="Giao tiếp"></option>
+        <option value="Kích thước"></option>
+        <option value="Dải đo"></option>
+        <option value="Sai số"></option>
+        <option value="Công suất"></option>
+    </datalist>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead class="table-light">
+                <tr><th>Tên thông số</th><th>Giá trị</th><th style="width:140px">Đơn vị</th><th style="width:48px"></th></tr>
+            </thead>
+            <tbody id="tbThongSo">
+            @for (var i = 0; i < Model.ThongSo.Count; i++)
+            {
+                <tr>
+                    <td><input name="ThongSo[@i].TenThongSo" value="@Model.ThongSo[i].TenThongSo" list="dlTenThongSo" class="form-control form-control-sm" /></td>
+                    <td><input name="ThongSo[@i].GiaTri" value="@Model.ThongSo[i].GiaTri" class="form-control form-control-sm" /></td>
+                    <td><input name="ThongSo[@i].DonVi" value="@Model.ThongSo[i].DonVi" class="form-control form-control-sm" /></td>
+                    <td><button type="button" class="btn btn-sm btn-outline-danger btn-xoa-dong" title="Xóa dòng">&times;</button></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <button type="button" id="btnThemDong" class="btn btn-sm btn-outline-primary">+ Thêm thông số</button>
+
+    <hr />
+    <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var tb = document.getElementById('tbThongSo');
+
+            // Đánh lại chỉ số ThongSo[0], ThongSo[1]... để model binding nhận đủ dòng
+            function reindex() {
+                Array.prototype.forEach.call(tb.querySelectorAll('tr'), function (tr, i) {
+                    Array.prototype.forEach.call(tr.querySelectorAll('input'), function (inp) {
+                        inp.name = inp.name.replace(/ThongSo\[\d+\]/, 'ThongSo[' + i + ']');
+                    });
+                });
+            }
+
+            document.getElementById('btnThemDong').addEventListener('click', function () {
+                var i = tb.querySelectorAll('tr').length;
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><input name="ThongSo[' + i + '].TenThongSo" list="dlTenThongSo" class="form-control form-control-sm" /></td>' +
+                    '<td><input name="ThongSo[' + i + '].GiaTri" class="form-control form-control-sm" /></td>' +
+                    '<td><input name="ThongSo[' + i + '].DonVi" class="form-control form-control-sm" /></td>' +
+                    '<td><button type="button" class="btn btn-sm btn-outline-danger btn-xoa-dong" title="Xóa dòng">&times;</button></td>';
+                tb.appendChild(tr);
+                tr.querySelector('input').focus();
+            });
+
+            tb.addEventListener('click', function (e) {
+                var btn = e.target.closest('.btn-xoa-dong');
+                if (!btn) return;
+                btn.closest('tr').remove();
+                reindex();
+            });
+
+            // Xem trước ảnh
+            var file = document.getElementById('Anh');
+            file.addEventListener('change', function () {
+                var f = file.files[0];
+                if (!f) return;
+                var img = document.getElementById('imgPreview');
+                img.src = URL.createObjectURL(f);
+                img.classList.remove('d-none');
+                document.getElementById('imgEmpty').classList.add('d-none');
+            });
+        })();
+    </script>
+}

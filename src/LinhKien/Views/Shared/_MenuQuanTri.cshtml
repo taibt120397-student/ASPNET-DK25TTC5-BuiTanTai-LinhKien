@@ -1,0 +1,12 @@
+@* Chèn <partial name="_MenuQuanTri" /> vào <ul class="navbar-nav"> trong _Layout.cshtml *@
+@if (User.IsInRole("Admin") || User.IsInRole("NhanVien"))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quản trị</a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" asp-controller="QuanLySanPham" asp-action="Index">Sản phẩm</a></li>
+            <li><a class="dropdown-item" asp-controller="QuanLyDanhMuc" asp-action="Index">Danh mục</a></li>
+            <li><a class="dropdown-item" asp-controller="QuanLyThuongHieu" asp-action="Index">Thương hiệu</a></li>
+        </ul>
+    </li>
+}

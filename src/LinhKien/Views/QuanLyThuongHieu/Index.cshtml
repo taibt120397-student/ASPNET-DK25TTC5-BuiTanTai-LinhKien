@@ -1,0 +1,45 @@
+@model List<LinhKien.ViewModels.ThuongHieuRow>
+@{
+    ViewData["Title"] = "Quản lý thương hiệu";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Thương hiệu</h1>
+    <a class="btn btn-primary" asp-action="Create">+ Thêm thương hiệu</a>
+</div>
+
+<partial name="_ThongBao" />
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Tên thương hiệu</th>
+                <th>Quốc gia</th>
+                <th class="text-center">Sản phẩm</th>
+                <th class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td class="fw-semibold">@r.Ten</td>
+                <td>@r.QuocGia</td>
+                <td class="text-center">@r.SoSanPham</td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@r.Id">Sửa</a>
+                    <form asp-action="Delete" asp-route-id="@r.Id" method="post" class="d-inline"
+                          onsubmit="return confirm('Xóa thương hiệu “@r.Ten”?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="4" class="text-center text-muted py-4">Chưa có thương hiệu nào.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

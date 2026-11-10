@@ -1,0 +1,29 @@
+@model LinhKien.ViewModels.ThuongHieuFormVM
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Thêm thương hiệu" : "Sửa thương hiệu";
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+<form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.Id)" method="post" class="col-lg-6 p-0">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="TenThuongHieu" class="form-label"></label>
+        <input asp-for="TenThuongHieu" class="form-control" autofocus />
+        <span asp-validation-for="TenThuongHieu" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="QuocGia" class="form-label"></label>
+        <input asp-for="QuocGia" class="form-control" />
+        <span asp-validation-for="QuocGia" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

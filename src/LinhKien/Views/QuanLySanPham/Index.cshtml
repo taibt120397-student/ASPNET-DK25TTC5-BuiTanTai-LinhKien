@@ -1,0 +1,144 @@
+@using LinhKien.Helpers
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model LinhKien.ViewModels.SanPhamIndexVM
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    var dmList = (List<SelectListItem>)ViewBag.DanhMucList;
+    var thList = (List<SelectListItem>)ViewBag.ThuongHieuList;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Sản phẩm <small class="text-muted fs-6">(@Model.TongSo)</small></h1>
+    <a class="btn btn-primary" asp-action="Create">+ Thêm sản phẩm</a>
+</div>
+
+<partial name="_ThongBao" />
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input name="q" value="@Model.Q" class="form-control" placeholder="Tìm theo mã hoặc tên sản phẩm" />
+    </div>
+    <div class="col-md-3">
+        <select name="danhMucId" class="form-select">
+            <option value="">Tất cả danh mục</option>
+            @foreach (var i in dmList)
+            {
+                <option value="@i.Value" selected="@(i.Value == Model.DanhMucId?.ToString())">@i.Text</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="thuongHieuId" class="form-select">
+            <option value="">Tất cả thương hiệu</option>
+            @foreach (var i in thList)
+            {
+                <option value="@i.Value" selected="@(i.Value == Model.ThuongHieuId?.ToString())">@i.Text</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button class="btn btn-outline-primary" type="submit">Lọc</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th style="width:64px"></th>
+                <th>Mã</th>
+                <th>Tên sản phẩm</th>
+                <th>Danh mục / Hãng</th>
+                <th class="text-end">Giá</th>
+                <th class="text-center">Tồn</th>
+                <th>Trạng thái</th>
+                <th class="text-end">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in Model.Rows)
+        {
+            <tr class="@(r.NgungBan ? "table-secondary" : "")">
+                <td>
+                    @if (!string.IsNullOrEmpty(r.HinhAnh))
+                    {
+                        <img src="@r.HinhAnh" alt="@r.TenSP" width="48" height="48" class="rounded" style="object-fit:cover" />
+                    }
+                    else
+                    {
+                        <div class="bg-light border rounded d-flex align-items-center justify-content-center text-muted" style="width:48px;height:48px;font-size:11px">No img</div>
+                    }
+                </td>
+                <td class="text-nowrap">@r.MaSP</td>
+                <td>@r.TenSP</td>
+                <td class="small">@r.DanhMuc<br /><span class="text-muted">@r.ThuongHieu</span></td>
+                <td class="text-end text-nowrap">
+                    @if (r.GiaKhuyenMai.HasValue)
+                    {
+                        <span class="fw-semibold text-danger">@r.GiaKhuyenMai.Vnd()</span><br />
+                        <s class="text-muted small">@r.Gia.Vnd()</s>
+                    }
+                    else
+                    {
+                        @r.Gia.Vnd()
+                    }
+                </td>
+                <td class="text-center">
+                    @if (r.SoLuongTon <= r.MucTonToiThieu)
+                    {
+                        <span class="badge text-bg-danger" title="Tồn thấp (mức tối thiểu @r.MucTonToiThieu)">@r.SoLuongTon</span>
+                    }
+                    else
+                    {
+                        @r.SoLuongTon
+                    }
+                </td>
+                <td>
+                    @if (r.NgungBan) { <span class="badge text-bg-secondary">Đang ẩn</span> }
+                    else { <span class="badge text-bg-success">Đang bán</span> }
+                </td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@r.Id">Sửa</a>
+                    <form asp-action="Toggle" asp-route-id="@r.Id" method="post" class="d-inline">
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                        <button type="submit" class="btn btn-sm btn-outline-warning">@(r.NgungBan ? "Hiện" : "Ẩn")</button>
+                    </form>
+                    <form asp-action="Delete" asp-route-id="@r.Id" method="post" class="d-inline"
+                          onsubmit="return confirm('Xóa sản phẩm @r.MaSP?');">
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @if (!Model.Rows.Any())
+        {
+            <tr><td colspan="8" class="text-center text-muted py-4">Không có sản phẩm phù hợp.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.TongTrang > 1)
+{
+    <nav aria-label="Phân trang">
+        <ul class="pagination justify-content-center flex-wrap">
+            <li class="page-item @(Model.Trang == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-q="@Model.Q" asp-route-danhMucId="@Model.DanhMucId"
+                   asp-route-thuongHieuId="@Model.ThuongHieuId" asp-route-trang="@(Model.Trang - 1)">«</a>
+            </li>
+            @for (var p = 1; p <= Model.TongTrang; p++)
+            {
+                <li class="page-item @(p == Model.Trang ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-q="@Model.Q" asp-route-danhMucId="@Model.DanhMucId"
+                       asp-route-thuongHieuId="@Model.ThuongHieuId" asp-route-trang="@p">@p</a>
+                </li>
+            }
+            <li class="page-item @(Model.Trang == Model.TongTrang ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-q="@Model.Q" asp-route-danhMucId="@Model.DanhMucId"
+                   asp-route-thuongHieuId="@Model.ThuongHieuId" asp-route-trang="@(Model.Trang + 1)">»</a>
+            </li>
+        </ul>
+    </nav>
+}
