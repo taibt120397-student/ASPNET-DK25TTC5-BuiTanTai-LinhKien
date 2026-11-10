@@ -51,13 +51,13 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them quan ly danh muc
 
 ## 4. Kết quả đạt được và tự kiểm tra
 
-- [ ] Trang `/quan-tri/danh-muc` hiển thị cây danh mục đúng cấp
-- [ ] Thêm, sửa, xóa thương hiệu; xóa thương hiệu còn sản phẩm bị chặn
-- [ ] Thêm sản phẩm có thông số kỹ thuật và ảnh; mã tự sinh đúng
-- [ ] Tìm kiếm, lọc theo danh mục và thương hiệu, phân trang hoạt động
-- [ ] Upload file không phải ảnh hoặc quá 2 MB bị từ chối
-- [ ] Tài khoản khách hàng vào `/quan-tri/...` bị chặn
-- [ ] Khách đăng ký mới có vai trò `KhachHang` trong bảng `AspNetUserRoles`
+- [x] Trang `/quan-tri/danh-muc` hiển thị cây danh mục đúng cấp
+- [x] Thêm, sửa, xóa thương hiệu; xóa thương hiệu còn sản phẩm bị chặn
+- [x] Thêm sản phẩm có thông số kỹ thuật và ảnh; mã tự sinh đúng
+- [x] Tìm kiếm, lọc theo danh mục và thương hiệu, phân trang hoạt động
+- [x] Upload file không phải ảnh hoặc quá 2 MB bị từ chối
+- [x] Tài khoản khách hàng vào `/quan-tri/...` bị chặn
+- [x] Khách đăng ký mới có vai trò `KhachHang` trong bảng `AspNetUserRoles`
 
 **Hình ảnh minh chứng** (thêm ảnh vào thư mục `docs/` rồi chỉnh tên file cho khớp):
 
