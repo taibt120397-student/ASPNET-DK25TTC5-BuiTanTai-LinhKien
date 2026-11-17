@@ -1,0 +1,149 @@
+@model LinhKien.ViewModels.SanPhamListVM
+@{
+    ViewData["Title"] = Model.TenDanhMuc
+        ?? (string.IsNullOrWhiteSpace(Model.Q) ? "Tất cả sản phẩm" : "Kết quả cho “" + Model.Q + "”");
+    var batDau = Math.Max(1, Model.Trang - 2);
+    var ketThuc = Math.Min(Model.TongTrang, Model.Trang + 2);
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="/san-pham">Sản phẩm</a></li>
+        @foreach (var c in Model.Breadcrumb)
+        {
+            <li class="breadcrumb-item"><a href="@Model.LinkDanhMuc(c.Slug)">@c.Ten</a></li>
+        }
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <!-- ===== Thanh bên ===== -->
+    <aside class="col-lg-3">
+        <h2 class="h6 text-uppercase text-muted">Danh mục</h2>
+        <div class="list-group mb-4">
+            <a class="list-group-item list-group-item-action @(Model.DanhMuc == null ? "active" : "")" href="@Model.LinkDanhMuc(null)">Tất cả sản phẩm</a>
+            @foreach (var d in Model.CayDanhMuc)
+            {
+                <a class="list-group-item list-group-item-action @(d.Active ? "active" : "") @(d.Level == 0 ? "fw-semibold" : "small")"
+                   style="padding-left:@(d.Level * 18 + 16)px" href="@Model.LinkDanhMuc(d.Slug)">@d.Ten</a>
+            }
+        </div>
+
+        <form id="frmLoc" method="get" action="/san-pham" class="filter-panel">
+            <input type="hidden" name="q" value="@Model.Q" />
+            <input type="hidden" name="danhMuc" value="@Model.DanhMuc" />
+
+            <h2 class="h6 text-uppercase text-muted">Bộ lọc</h2>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold" for="thuongHieu">Thương hiệu</label>
+                <select id="thuongHieu" name="thuongHieu" class="form-select form-select-sm">
+                    <option value="">Tất cả</option>
+                    @foreach (var h in Model.ThuongHieus)
+                    {
+                        <option value="@h.Id" selected="@(Model.ThuongHieu == h.Id)">@h.Ten (@h.Dem)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold">Khoảng giá (₫)</label>
+                <div class="input-group input-group-sm">
+                    <input name="giaTu" type="number" min="0" step="1000" class="form-control" placeholder="Từ" value="@Model.GiaTu" />
+                    <input name="giaDen" type="number" min="0" step="1000" class="form-control" placeholder="Đến" value="@Model.GiaDen" />
+                </div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="conHang" name="conHang" value="true" @(Model.ConHang ? "checked" : null) />
+                <label class="form-check-label small" for="conHang">Chỉ hiện sản phẩm còn hàng</label>
+            </div>
+
+            @foreach (var f in Model.Facets)
+            {
+                <div class="mb-3">
+                    <div class="form-label small fw-semibold">@f.Ten</div>
+                    @foreach (var v in f.GiaTri)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="ts" value="@(f.Ten + "|" + v.GiaTri)" id="ts_@(f.Ten.GetHashCode())_@(v.GiaTri.GetHashCode())" @(v.Chon ? "checked" : null) />
+                            <label class="form-check-label small" for="ts_@(f.Ten.GetHashCode())_@(v.GiaTri.GetHashCode())">@v.GiaTri @v.DonVi <span class="text-muted">(@v.Dem)</span></label>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">Áp dụng bộ lọc</button>
+                @if (Model.CoLoc)
+                {
+                    <a class="btn btn-outline-secondary btn-sm" href="@Model.LinkDanhMuc(Model.DanhMuc)">Xóa bộ lọc</a>
+                }
+            </div>
+        </form>
+    </aside>
+
+    <!-- ===== Kết quả ===== -->
+    <section class="col-lg-9">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <div>
+                <h1 class="h4 mb-0">@ViewData["Title"]</h1>
+                <div class="small text-muted">@Model.TongSo sản phẩm</div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <label for="sapXep" class="small text-muted mb-0">Sắp xếp</label>
+                <select id="sapXep" name="sapXep" form="frmLoc" class="form-select form-select-sm" style="width:auto" onchange="document.getElementById('frmLoc').submit()">
+                    <option value="moi" selected="@(Model.SapXep == "moi")">Mới nhất</option>
+                    <option value="gia-tang" selected="@(Model.SapXep == "gia-tang")">Giá tăng dần</option>
+                    <option value="gia-giam" selected="@(Model.SapXep == "gia-giam")">Giá giảm dần</option>
+                    <option value="ten" selected="@(Model.SapXep == "ten")">Tên A–Z</option>
+                </select>
+            </div>
+        </div>
+
+        @if (!Model.Items.Any())
+        {
+            <div class="alert alert-light border">Không tìm thấy sản phẩm phù hợp. Hãy thử bỏ bớt bộ lọc hoặc đổi từ khóa.</div>
+        }
+        else
+        {
+            <div class="row row-cols-2 row-cols-md-3 g-3">
+                @foreach (var sp in Model.Items)
+                {
+                    <div class="col"><partial name="_SanPhamCard" model="sp" /></div>
+                }
+            </div>
+        }
+
+        @if (Model.TongTrang > 1)
+        {
+            <nav class="mt-4" aria-label="Phân trang">
+                <ul class="pagination justify-content-center flex-wrap">
+                    <li class="page-item @(Model.Trang == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Model.LinkTrang(Model.Trang - 1)">«</a>
+                    </li>
+                    @if (batDau > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="@Model.LinkTrang(1)">1</a></li>
+                        @if (batDau > 2) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                    }
+                    @for (var p = batDau; p <= ketThuc; p++)
+                    {
+                        <li class="page-item @(p == Model.Trang ? "active" : "")">
+                            <a class="page-link" href="@Model.LinkTrang(p)">@p</a>
+                        </li>
+                    }
+                    @if (ketThuc < Model.TongTrang)
+                    {
+                        @if (ketThuc < Model.TongTrang - 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                        <li class="page-item"><a class="page-link" href="@Model.LinkTrang(Model.TongTrang)">@Model.TongTrang</a></li>
+                    }
+                    <li class="page-item @(Model.Trang == Model.TongTrang ? "disabled" : "")">
+                        <a class="page-link" href="@Model.LinkTrang(Model.Trang + 1)">»</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </section>
+</div>

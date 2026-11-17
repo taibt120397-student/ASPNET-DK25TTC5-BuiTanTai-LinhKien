@@ -1,0 +1,55 @@
+@using LinhKien.Helpers
+@model LinhKien.ViewModels.SanPhamCardVM
+@{
+    var led = Model.SoLuongTon <= 0 ? "led-out" : Model.SoLuongTon <= Model.MucTonToiThieu ? "led-low" : "led-ok";
+    var tinhTrang = Model.SoLuongTon <= 0 ? "Hết hàng" : Model.SoLuongTon <= Model.MucTonToiThieu ? "Sắp hết" : "Còn hàng";
+}
+
+<div class="card product-card h-100">
+    <a asp-controller="SanPham" asp-action="ChiTiet" asp-route-slug="@Model.Slug" class="card-media" tabindex="-1" aria-hidden="true">
+        @if (!string.IsNullOrEmpty(Model.HinhAnh))
+        {
+            <img src="@Model.HinhAnh" alt="" class="card-img-top" style="height:180px;object-fit:cover" loading="lazy" />
+        }
+        else
+        {
+            <div class="bg-light text-muted d-flex align-items-center justify-content-center" style="height:180px">Chưa có ảnh</div>
+        }
+        @if (Model.PhanTramGiam > 0)
+        {
+            <span class="badge text-bg-danger position-absolute top-0 start-0 m-2">-@(Model.PhanTramGiam)%</span>
+        }
+    </a>
+    <div class="card-body d-flex flex-column pb-2">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="ma-sp">@Model.MaSP</span>
+            <span class="stock" title="@tinhTrang"><i class="led @led"></i>@tinhTrang</span>
+        </div>
+        <a asp-controller="SanPham" asp-action="ChiTiet" asp-route-slug="@Model.Slug" class="text-dark fw-semibold text-decoration-none">@Model.Ten</a>
+        @if (!string.IsNullOrEmpty(Model.ThuongHieuTen))
+        {
+            <div class="small text-muted">@Model.ThuongHieuTen</div>
+        }
+        <div class="mt-auto pt-2 price">
+            @if (Model.GiaKhuyenMai.HasValue)
+            {
+                <span class="fw-bold text-danger">@Model.GiaKhuyenMai.Vnd()</span>
+                <s class="text-muted small ms-1">@Model.Gia.Vnd()</s>
+            }
+            else
+            {
+                <span class="fw-bold">@Model.Gia.Vnd()</span>
+            }
+        </div>
+    </div>
+    <div class="card-footer bg-white border-0 pt-0">
+        @if (Model.SoLuongTon > 0)
+        {
+            <button type="button" class="btn btn-sm btn-primary w-100" data-them-gio data-id="@Model.Id">Thêm vào giỏ</button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-sm btn-outline-secondary w-100" disabled>Hết hàng</button>
+        }
+    </div>
+</div>

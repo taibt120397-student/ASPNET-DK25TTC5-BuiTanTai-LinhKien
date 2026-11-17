@@ -1,0 +1,94 @@
+@using LinhKien.Helpers
+@model LinhKien.ViewModels.GioHangVM
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<h1 class="h3 mb-3">Giỏ hàng của bạn</h1>
+
+<partial name="_ThongBao" />
+
+@if (!Model.Dong.Any())
+{
+    <div class="alert alert-light border">
+        Giỏ hàng đang trống. <a asp-controller="SanPham" asp-action="Index">Tiếp tục mua hàng</a>.
+    </div>
+}
+else
+{
+    @if (Model.CoCanhBao)
+    {
+        <div class="alert alert-warning">Một số sản phẩm trong giỏ có vấn đề về tồn kho hoặc đã ngừng bán. Vui lòng điều chỉnh trước khi đặt hàng.</div>
+    }
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width:72px"></th>
+                    <th>Sản phẩm</th>
+                    <th class="text-end">Đơn giá</th>
+                    <th style="width:170px">Số lượng</th>
+                    <th class="text-end">Thành tiền</th>
+                    <th style="width:70px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var d in Model.Dong)
+            {
+                <tr class="@(d.CanhBao != null ? "table-warning" : "")">
+                    <td>
+                        @if (!string.IsNullOrEmpty(d.HinhAnh))
+                        {
+                            <img src="@d.HinhAnh" alt="@d.Ten" width="56" height="56" class="rounded" style="object-fit:cover" />
+                        }
+                        else
+                        {
+                            <div class="bg-light border rounded" style="width:56px;height:56px"></div>
+                        }
+                    </td>
+                    <td>
+                        <a asp-controller="SanPham" asp-action="ChiTiet" asp-route-slug="@d.Slug" class="text-dark fw-semibold text-decoration-none">@d.Ten</a>
+                        <div class="small text-muted">@d.MaSP</div>
+                        @if (d.CanhBao != null)
+                        {
+                            <div class="small text-danger">@d.CanhBao</div>
+                        }
+                    </td>
+                    <td class="text-end text-nowrap">
+                        @d.DonGia.Vnd()
+                        @if (d.GiaKhuyenMai.HasValue) { <br /><s class="small text-muted">@d.Gia.Vnd()</s> }
+                    </td>
+                    <td>
+                        <form asp-action="CapNhat" method="post" class="d-flex gap-1">
+                            <input type="hidden" name="id" value="@d.ChiTietId" />
+                            <input type="number" name="soLuong" value="@d.SoLuong" min="1" max="@Math.Max(d.Ton, 1)" class="form-control form-control-sm" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Cập nhật</button>
+                        </form>
+                    </td>
+                    <td class="text-end text-nowrap fw-semibold">@d.ThanhTien.Vnd()</td>
+                    <td>
+                        <form asp-action="Xoa" method="post" onsubmit="return confirm('Xóa sản phẩm này khỏi giỏ hàng?');">
+                            <input type="hidden" name="id" value="@d.ChiTietId" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end fw-semibold">Tổng tiền hàng</td>
+                    <td class="text-end fs-5 fw-bold text-danger text-nowrap">@Model.TongTien.Vnd()</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-controller="SanPham" asp-action="Index" class="btn btn-outline-secondary">Tiếp tục mua hàng</a>
+        @* Tuần 4: thay nút này bằng liên kết sang trang đặt hàng *@
+        <button type="button" class="btn btn-primary" disabled title="Chức năng đặt hàng sẽ có ở tuần 4">Đặt hàng</button>
+    </div>
+}

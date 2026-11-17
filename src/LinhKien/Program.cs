@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 	builder.Services.AddScoped<LinhKien.Services.IImageService, LinhKien.Services.ImageService>();
-
+	builder.Services.AddScoped<LinhKien.Services.IGioHangService, LinhKien.Services.GioHangService>();
 builder.Services.AddDefaultIdentity<ApplicationUser>(o =>
 {
     o.Password.RequiredLength = 6;

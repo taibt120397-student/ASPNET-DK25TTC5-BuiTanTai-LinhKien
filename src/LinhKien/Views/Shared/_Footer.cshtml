@@ -1,0 +1,31 @@
+@* Thay khối <footer>...</footer> trong _Layout.cshtml bằng: <partial name="_Footer" /> *@
+<footer class="footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-5">
+                <h2>LinhKien</h2>
+                <p class="mb-0">Cửa hàng linh kiện điện tử cho sinh viên, người làm dự án tự chế và kỹ thuật viên. Mỗi sản phẩm có thông số kỹ thuật và datasheet.</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <h2>Mua sắm</h2>
+                <ul class="list-unstyled mb-0">
+                    <li><a href="/san-pham">Tất cả sản phẩm</a></li>
+                    <li><a href="/san-pham?sapXep=gia-tang">Giá thấp đến cao</a></li>
+                    <li><a asp-controller="GioHang" asp-action="Index">Giỏ hàng</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-4">
+                <h2>Liên hệ</h2>
+                <ul class="list-unstyled mb-0">
+                    <li>Email: admin@linhkien.local</li>
+                    <li>Điện thoại: 0987654xxx</li>
+                    <li>Giờ làm việc: 8:00 – 17:30, thứ hai đến thứ bảy</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copy d-flex justify-content-between flex-wrap gap-2">
+            <span>&copy; 2026 LinhKien</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Chính sách riêng tư</a>
+        </div>
+    </div>
+</footer>

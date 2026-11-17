@@ -1,0 +1,117 @@
+@using LinhKien.Helpers
+@model LinhKien.ViewModels.ChiTietSanPhamVM
+@{
+    ViewData["Title"] = Model.Ten;
+    var led = Model.SoLuongTon <= 0 ? "led-out" : Model.SoLuongTon <= Model.MucTonToiThieu ? "led-low" : "led-ok";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="/san-pham">Sản phẩm</a></li>
+        @foreach (var c in Model.Breadcrumb)
+        {
+            <li class="breadcrumb-item"><a href="/san-pham?danhMuc=@c.Slug">@c.Ten</a></li>
+        }
+        <li class="breadcrumb-item active" aria-current="page">@Model.Ten</li>
+    </ol>
+</nav>
+
+<div class="row g-4 mb-4 detail-wrap">
+    <div class="col-md-5">
+        <div class="detail-photo">
+            @if (!string.IsNullOrEmpty(Model.HinhAnh))
+            {
+                <div data-zoom title="Rê chuột để phóng to">
+                    <img src="@Model.HinhAnh" alt="@Model.Ten" class="img-fluid d-block mx-auto" style="max-height:420px" />
+                </div>
+            }
+            else
+            {
+                <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded" style="height:320px">Chưa có ảnh</div>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <h1 class="h3 mb-1">@Model.Ten</h1>
+        <div class="text-muted small mb-3">
+            <span class="ma-sp">@Model.MaSP</span>
+            @if (!string.IsNullOrEmpty(Model.ThuongHieu))
+            {
+                <span class="ms-2">Thương hiệu <strong>@Model.ThuongHieu</strong>@(string.IsNullOrEmpty(Model.QuocGia) ? "" : " (" + Model.QuocGia + ")")</span>
+            }
+        </div>
+
+        <div class="mb-3 price">
+            @if (Model.GiaKhuyenMai.HasValue)
+            {
+                <span class="fs-2 fw-bold text-danger">@Model.GiaKhuyenMai.Vnd()</span>
+                <s class="text-muted ms-2">@Model.Gia.Vnd()</s>
+                <span class="badge text-bg-danger ms-2">-@(Model.PhanTramGiam)%</span>
+            }
+            else
+            {
+                <span class="fs-2 fw-bold">@Model.Gia.Vnd()</span>
+            }
+        </div>
+
+        <div class="mb-3">
+            <span class="stock fs-6"><i class="led @led"></i>@Model.TinhTrang</span>
+        </div>
+
+        @if (Model.SoLuongTon > 0)
+        {
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <label for="soLuong" class="mb-0">Số lượng</label>
+                <input id="soLuong" type="number" min="1" max="@Model.SoLuongTon" value="1" class="form-control" style="width:90px" />
+                <button type="button" class="btn btn-primary btn-lg" data-them-gio data-id="@Model.Id" data-qty="#soLuong">Thêm vào giỏ hàng</button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.DatasheetUrl))
+        {
+            <a class="btn btn-outline-secondary btn-sm" href="@Model.DatasheetUrl" target="_blank" rel="noopener noreferrer">Xem datasheet</a>
+        }
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    @if (Model.ThongSo.Any())
+    {
+        <div class="col-lg-6">
+            <div class="sheet">
+                <div class="sheet-head"><span>Thông số kỹ thuật</span><span class="ma-sp">@Model.MaSP</span></div>
+                <table class="table table-sm spec-table">
+                    <tbody>
+                    @foreach (var t in Model.ThongSo)
+                    {
+                        <tr>
+                            <th>@t.Ten</th>
+                            <td>@t.GiaTri @t.DonVi</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.MoTa))
+    {
+        <div class="col-lg-6">
+            <h2 class="h5">Mô tả</h2>
+            <p style="white-space:pre-line">@Model.MoTa</p>
+        </div>
+    }
+</div>
+
+@if (Model.LienQuan.Any())
+{
+    <h2 class="h5 mb-3">Sản phẩm liên quan</h2>
+    <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+        @foreach (var sp in Model.LienQuan)
+        {
+            <div class="col"><partial name="_SanPhamCard" model="sp" /></div>
+        }
+    </div>
+}

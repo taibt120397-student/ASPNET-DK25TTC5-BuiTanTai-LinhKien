@@ -1,8 +1,100 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model LinhKien.ViewModels.TrangChuVM
+@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <svg class="traces" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <defs>
+            <path id="m1" d="M0 330 H220 L260 290 H520 L560 330 H800 L840 290 H1200" />
+            <path id="m2" d="M0 90 H180 L220 130 H420 L460 90 H700 L740 50 H1200" />
+            <path id="m3" d="M1200 200 H980 L940 240 H700 L660 200 H460 L420 240 H300" />
+            <path id="m4" d="M120 420 V360 L160 320 V200 L200 160 H330" />
+            <path id="m5" d="M900 0 V60 L940 100 H1040 L1080 140 V260" />
+        </defs>
+        <use href="#m1" class="trace" /><use href="#m1" class="trace-flow" />
+        <use href="#m2" class="trace" /><use href="#m2" class="trace-flow" style="animation-delay:-1.6s" />
+        <use href="#m3" class="trace" /><use href="#m3" class="trace-flow" style="animation-delay:-3.2s" />
+        <use href="#m4" class="trace" /><use href="#m4" class="trace-flow" style="animation-delay:-.8s" />
+        <use href="#m5" class="trace" /><use href="#m5" class="trace-flow" style="animation-delay:-2.4s" />
+        <g>
+            <circle class="pad" cx="260" cy="290" r="7" /><circle class="pad" cx="560" cy="330" r="7" />
+            <circle class="pad" cx="840" cy="290" r="7" /><circle class="pad" cx="220" cy="130" r="7" />
+            <circle class="pad" cx="460" cy="90" r="7" /><circle class="pad" cx="740" cy="50" r="7" />
+            <circle class="pad" cx="940" cy="240" r="7" /><circle class="pad" cx="660" cy="200" r="7" />
+            <circle class="pad" cx="420" cy="240" r="7" /><circle class="pad" cx="160" cy="320" r="7" />
+            <circle class="pad" cx="330" cy="160" r="7" /><circle class="pad" cx="1040" cy="100" r="7" />
+            <circle class="pad" cx="1080" cy="260" r="7" />
+        </g>
+    </svg>
+
+    <h1 class="mb-3">Linh kiện điện tử cho mọi dự án</h1>
+    <p class="lead mb-4">Vi điều khiển, cảm biến, module, IC, điện trở, tụ điện. Mỗi sản phẩm có thông số kỹ thuật và datasheet.</p>
+
+    <form action="/san-pham" method="get" class="row g-2 col-lg-8 p-0" role="search">
+        <div class="col">
+            <input name="q" class="form-control form-control-lg" data-goi-y autocomplete="off"
+                   placeholder="Nhập tên hoặc mã linh kiện, ví dụ: ESP32, DHT22, LK0001" aria-label="Tìm linh kiện" />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-copper btn-lg" type="submit">Tìm kiếm</button>
+        </div>
+    </form>
+    <div class="mt-3">
+        <span class="small" style="color:#bfe0d2">Tìm nhiều:</span>
+        <a class="chip" href="/san-pham?q=ESP32">ESP32</a>
+        <a class="chip" href="/san-pham?q=Arduino">Arduino</a>
+        <a class="chip" href="/san-pham?q=DHT22">DHT22</a>
+        <a class="chip" href="/san-pham?q=relay">Relay</a>
+        <a class="chip" href="/san-pham?q=m%E1%BB%8F">Mỏ hàn</a>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="h4 mb-3">Danh mục sản phẩm</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        @foreach (var nhom in Model.DanhMuc)
+        {
+            <div class="col">
+                <div class="cat-card">
+                    <a class="cat-title" href="/san-pham?danhMuc=@nhom.Slug">@nhom.Ten</a>
+                    <div>
+                        @foreach (var con in nhom.Con)
+                        {
+                            <a class="sub-chip" href="/san-pham?danhMuc=@con.Slug">@con.Ten</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@if (Model.KhuyenMai.Any())
+{
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <h2 class="h4 mb-0">Đang khuyến mãi</h2>
+            <a href="/san-pham" class="small">Xem tất cả</a>
+        </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+            @foreach (var sp in Model.KhuyenMai)
+            {
+                <div class="col"><partial name="_SanPhamCard" model="sp" /></div>
+            }
+        </div>
+    </section>
+}
+
+<section class="mb-4">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <h2 class="h4 mb-0">Sản phẩm mới</h2>
+        <a href="/san-pham" class="small">Xem tất cả</a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+        @foreach (var sp in Model.Moi)
+        {
+            <div class="col"><partial name="_SanPhamCard" model="sp" /></div>
+        }
+    </div>
+</section>
