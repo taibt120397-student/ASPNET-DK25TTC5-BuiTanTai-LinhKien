@@ -1,0 +1,36 @@
+@model LinhKien.ViewModels.DiaChiFormVM
+@{
+    var moi = Model.Id == 0;
+    ViewData["Title"] = moi ? "Thêm địa chỉ" : "Sửa địa chỉ";
+}
+<div class="row g-4">
+    <aside class="col-lg-3"><partial name="_TaiKhoanMenu" /></aside>
+    <section class="col-lg-9">
+        <h1 class="h3 mb-3">@ViewData["Title"]</h1>
+        <form asp-action="@(moi ? "TaoDiaChi" : "SuaDiaChi")" asp-route-id="@(moi ? null : Model.Id)" method="post" class="col-lg-8 p-0">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="HoTenNguoiNhan" class="form-label"></label>
+                <input asp-for="HoTenNguoiNhan" class="form-control" autofocus />
+                <span asp-validation-for="HoTenNguoiNhan" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DienThoai" class="form-label"></label>
+                <input asp-for="DienThoai" class="form-control" inputmode="tel" />
+                <span asp-validation-for="DienThoai" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DiaChi" class="form-label"></label>
+                <input asp-for="DiaChi" class="form-control" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành" />
+                <span asp-validation-for="DiaChi" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="MacDinh" class="form-check-input" />
+                <label asp-for="MacDinh" class="form-check-label"></label>
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu</button>
+            <a asp-action="DiaChi" class="btn btn-outline-secondary">Hủy</a>
+        </form>
+    </section>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

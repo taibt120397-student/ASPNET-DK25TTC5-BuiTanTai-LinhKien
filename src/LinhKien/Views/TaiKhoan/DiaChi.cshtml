@@ -1,0 +1,49 @@
+@model List<LinhKien.ViewModels.DiaChiItemVM>
+@{
+    ViewData["Title"] = "Sổ địa chỉ";
+}
+<div class="row g-4">
+    <aside class="col-lg-3"><partial name="_TaiKhoanMenu" /></aside>
+    <section class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h3 mb-0">Sổ địa chỉ</h1>
+            <a class="btn btn-primary" asp-action="TaoDiaChi">+ Thêm địa chỉ</a>
+        </div>
+        <partial name="_ThongBao" />
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-light border">Chưa có địa chỉ nào. Thêm địa chỉ để đặt hàng nhanh hơn.</div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var d in Model)
+                {
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@d.HoTenNguoiNhan</strong>
+                                    @if (d.MacDinh) { <span class="badge text-bg-success">Mặc định</span> }
+                                </div>
+                                <div>@d.DienThoai</div>
+                                <div class="text-muted">@d.DiaChi</div>
+                            </div>
+                            <div class="card-footer bg-white border-0 d-flex flex-wrap gap-1">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="SuaDiaChi" asp-route-id="@d.Id">Sửa</a>
+                                @if (!d.MacDinh)
+                                {
+                                    <form asp-action="DatMacDinh" asp-route-id="@d.Id" method="post"><button class="btn btn-sm btn-outline-primary" type="submit">Đặt mặc định</button></form>
+                                }
+                                <form asp-action="XoaDiaChi" asp-route-id="@d.Id" method="post" onsubmit="return confirm('Xóa địa chỉ này?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Xóa</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+</div>

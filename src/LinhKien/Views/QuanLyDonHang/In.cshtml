@@ -1,0 +1,85 @@
+@using LinhKien.Helpers
+@using LinhKien.Models
+@model LinhKien.ViewModels.DonHangChiTietVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phiếu giao hàng @Model.MaDon</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; color: #111; margin: 0; padding: 24px; font-size: 14px; }
+        .phieu { max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 20px; margin: 0 0 4px; }
+        .top { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 14px; }
+        .ma { font-family: Consolas, monospace; font-size: 18px; font-weight: 700; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+        .box { border: 1px solid #999; padding: 10px 12px; }
+        .box h2 { font-size: 13px; text-transform: uppercase; margin: 0 0 6px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #999; padding: 6px 8px; text-align: left; }
+        th { background: #eee; }
+        .r { text-align: right; } .c { text-align: center; }
+        .tong td { font-weight: 700; }
+        .ky { display: flex; justify-content: space-around; margin-top: 36px; text-align: center; }
+        .ky div { width: 40%; }
+        .thu { font-size: 18px; font-weight: 700; }
+        .nut { text-align: center; margin-bottom: 16px; }
+        @@media print { .nut { display: none; } body { padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="nut"><button onclick="window.print()">In phiếu</button></div>
+    <div class="phieu">
+        <div class="top">
+            <div><h1>PHIẾU GIAO HÀNG</h1><div>LinhKien – Cửa hàng linh kiện điện tử</div></div>
+            <div class="r"><div class="ma">@Model.MaDon</div><div>Ngày đặt: @Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</div></div>
+        </div>
+
+        <div class="grid">
+            <div class="box">
+                <h2>Người nhận</h2>
+                <div><strong>@Model.TenNguoiNhan</strong></div>
+                <div>Điện thoại: @Model.DienThoai</div>
+                <div>Địa chỉ: @Model.DiaChiGiao</div>
+                @if (!string.IsNullOrWhiteSpace(Model.GhiChu)) { <div>Ghi chú: @Model.GhiChu</div> }
+            </div>
+            <div class="box">
+                <h2>Thanh toán</h2>
+                <div>@DonHangHelper.TenPhuongThuc(Model.PhuongThucThanhToan)</div>
+                <div>@DonHangHelper.TenThanhToan(Model.TrangThaiThanhToan)</div>
+                @if (Model.PhuongThucThanhToan == PhuongThucThanhToan.COD && Model.TrangThaiThanhToan != TrangThaiThanhToan.DaThanhToan)
+                {
+                    <div class="thu">Thu hộ (COD): @Model.TongTien.Vnd()</div>
+                }
+            </div>
+        </div>
+
+        <table>
+            <thead><tr><th class="c" style="width:40px">STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th class="c">SL</th><th class="r">Đơn giá</th><th class="r">Thành tiền</th></tr></thead>
+            <tbody>
+            @{ var stt = 0; }
+            @foreach (var d in Model.Dong)
+            {
+                stt++;
+                <tr><td class="c">@stt</td><td>@d.MaSP</td><td>@d.TenSP</td><td class="c">@d.SoLuong</td><td class="r">@d.DonGia.Vnd()</td><td class="r">@d.ThanhTien.Vnd()</td></tr>
+            }
+            </tbody>
+            <tfoot>
+                <tr><td colspan="5" class="r">Tiền hàng</td><td class="r">@Model.TienHang.Vnd()</td></tr>
+                <tr><td colspan="5" class="r">Giảm giá</td><td class="r">@(Model.TienGiam > 0 ? "-" + Model.TienGiam.Vnd() : "0 ₫")</td></tr>
+                <tr><td colspan="5" class="r">Phí vận chuyển</td><td class="r">@(Model.PhiVanChuyen == 0 ? "Miễn phí" : Model.PhiVanChuyen.Vnd())</td></tr>
+                <tr class="tong"><td colspan="5" class="r">TỔNG CỘNG</td><td class="r">@Model.TongTien.Vnd()</td></tr>
+            </tfoot>
+        </table>
+
+        <div class="ky">
+            <div>Người gửi hàng<br /><br /><br />(Ký, ghi rõ họ tên)</div>
+            <div>Người nhận hàng<br /><br /><br />(Ký, ghi rõ họ tên)</div>
+        </div>
+    </div>
+</body>
+</html>

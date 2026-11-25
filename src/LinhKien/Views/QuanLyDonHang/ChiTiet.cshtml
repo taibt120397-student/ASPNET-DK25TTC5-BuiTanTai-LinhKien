@@ -1,0 +1,118 @@
+@using LinhKien.Helpers
+@using LinhKien.Models
+@model LinhKien.ViewModels.DonHangChiTietVM
+@{
+    ViewData["Title"] = "Đơn " + Model.MaDon;
+    var daHuy = Model.TrangThai == TrangThaiDon.DaHuy;
+    var hoanThanh = Model.TrangThai == TrangThaiDon.HoanThanh;
+    var buoc = DonHangHelper.Buoc(Model.TrangThai);
+    var tiep = DonHangHelper.TiepTheo(Model.TrangThai);
+    var canXacNhanTien = !daHuy && Model.PhuongThucThanhToan == PhuongThucThanhToan.ChuyenKhoan
+                         && Model.TrangThaiThanhToan != TrangThaiThanhToan.DaThanhToan;
+}
+<link rel="stylesheet" href="~/css/don-hang.css" asp-append-version="true" />
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a asp-action="Index">Đơn hàng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.MaDon</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Đơn <span class="ma-sp fs-4">@Model.MaDon</span></h1>
+    <span class="badge fs-6 @DonHangHelper.Badge(Model.TrangThai)">@DonHangHelper.TenTrangThai(Model.TrangThai)</span>
+</div>
+<partial name="_ThongBao" />
+
+@if (daHuy)
+{
+    <ol class="steps cancelled"><li>Đơn hàng đã được hủy (tồn kho đã hoàn lại)</li></ol>
+}
+else
+{
+    <ol class="steps">
+        @for (var i = 0; i < DonHangHelper.CacBuoc.Length; i++)
+        {
+            <li class="@(i < buoc ? "done" : i == buoc ? "done current" : "")">@DonHangHelper.TenTrangThai(DonHangHelper.CacBuoc[i])</li>
+        }
+    </ol>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="summary-box h-100">
+            <h2 class="h6">Khách hàng</h2>
+            <div><strong>@Model.TenNguoiNhan</strong></div>
+            <div>@Model.DienThoai</div>
+            <div class="text-muted">@Model.DiaChiGiao</div>
+            @if (!string.IsNullOrEmpty(Model.EmailKhach)) { <div class="small mt-2">Tài khoản: @Model.EmailKhach</div> }
+            @if (!string.IsNullOrWhiteSpace(Model.GhiChu)) { <div class="small mt-2">Ghi chú: @Model.GhiChu</div> }
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-box h-100">
+            <h2 class="h6">Thanh toán</h2>
+            <div>@DonHangHelper.TenPhuongThuc(Model.PhuongThucThanhToan)</div>
+            <div class="@(Model.TrangThaiThanhToan == TrangThaiThanhToan.DaThanhToan ? "text-success fw-semibold" : "text-muted")">@DonHangHelper.TenThanhToan(Model.TrangThaiThanhToan)</div>
+            <div class="small text-muted mt-2">Đặt lúc @Model.NgayDat.ToString("HH:mm dd/MM/yyyy")</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-box h-100">
+            <h2 class="h6">Xử lý đơn</h2>
+            @if (hoanThanh || daHuy)
+            {
+                <div class="text-muted small">Đơn @(hoanThanh ? "đã hoàn thành" : "đã hủy") nên không được sửa.</div>
+            }
+            else
+            {
+                <div class="d-grid gap-2">
+                    @if (tiep != null)
+                    {
+                        <form asp-action="Chuyen" asp-route-id="@Model.Id" method="post">
+                            <input type="hidden" name="trangThaiMoi" value="@tiep" />
+                            <button class="btn btn-primary w-100" type="submit">@DonHangHelper.NhanNutTiep(Model.TrangThai)</button>
+                        </form>
+                    }
+                    @if (canXacNhanTien)
+                    {
+                        <form asp-action="XacNhanThanhToan" asp-route-id="@Model.Id" method="post">
+                            <button class="btn btn-outline-success w-100" type="submit">Xác nhận đã nhận tiền</button>
+                        </form>
+                    }
+                    <form asp-action="Huy" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Hủy đơn @Model.MaDon? Tồn kho sẽ được hoàn lại.');">
+                        <button class="btn btn-outline-danger w-100" type="submit">Hủy đơn (hoàn tồn)</button>
+                    </form>
+                </div>
+            }
+            <a class="btn btn-outline-secondary w-100 mt-2" asp-action="In" asp-route-id="@Model.Id" target="_blank" rel="noopener">In phiếu giao hàng</a>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead><tr><th style="width:64px"></th><th>Sản phẩm</th><th class="text-end">Đơn giá chốt</th><th class="text-center">SL</th><th class="text-end">Thành tiền</th></tr></thead>
+        <tbody>
+        @foreach (var d in Model.Dong)
+        {
+            <tr>
+                <td>@if (!string.IsNullOrEmpty(d.HinhAnh)) { <img src="@d.HinhAnh" alt="" width="48" height="48" class="rounded" style="object-fit:cover" /> }</td>
+                <td>@d.TenSP<div class="ma-sp">@d.MaSP</div></td>
+                <td class="text-end text-nowrap">@d.DonGia.Vnd()</td>
+                <td class="text-center">@d.SoLuong</td>
+                <td class="text-end text-nowrap">@d.ThanhTien.Vnd()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div class="summary-box col-md-5 ms-md-auto">
+    <div class="row-line"><span>Tiền hàng</span><span>@Model.TienHang.Vnd()</span></div>
+    <div class="row-line"><span>Giảm giá @(Model.MaGiamGia != null ? "(" + Model.MaGiamGia + ")" : "")</span><span>@(Model.TienGiam > 0 ? "-" + Model.TienGiam.Vnd() : "0 ₫")</span></div>
+    <div class="row-line"><span>Phí vận chuyển</span><span>@(Model.PhiVanChuyen == 0 ? "Miễn phí" : Model.PhiVanChuyen.Vnd())</span></div>
+    <div class="row-line total"><span>Tổng cộng</span><span class="text-danger">@Model.TongTien.Vnd()</span></div>
+</div>

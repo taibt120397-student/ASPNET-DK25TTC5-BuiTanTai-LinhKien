@@ -1,0 +1,187 @@
+@using LinhKien.Helpers
+@model LinhKien.ViewModels.DatHangPageVM
+@{
+    ViewData["Title"] = "Đặt hàng";
+    var f = Model.Form;
+    var diaChiMoi = f.DiaChiId == 0;
+}
+<link rel="stylesheet" href="~/css/don-hang.css" asp-append-version="true" />
+
+<h1 class="h3 mb-3">Đặt hàng</h1>
+<partial name="_ThongBao" />
+
+<form asp-action="Index" method="post" id="frmDatHang">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <!-- ===== 1. Địa chỉ ===== -->
+            <h2 class="h5">1. Địa chỉ giao hàng</h2>
+            @if (Model.DiaChis.Any())
+            {
+                <div class="d-grid gap-2 mb-3">
+                    @foreach (var d in Model.DiaChis)
+                    {
+                        <label class="pick-card d-flex gap-2">
+                            <input class="form-check-input mt-1" type="radio" name="DiaChiId" value="@d.Id" checked="@(f.DiaChiId == d.Id)" />
+                            <span>
+                                <strong>@d.HoTenNguoiNhan</strong> · @d.DienThoai
+                                @if (d.MacDinh) { <span class="badge text-bg-success ms-1">Mặc định</span> }
+                                <br /><span class="text-muted">@d.DiaChi</span>
+                            </span>
+                        </label>
+                    }
+                    <label class="pick-card d-flex gap-2">
+                        <input class="form-check-input mt-1" type="radio" name="DiaChiId" value="0" checked="@diaChiMoi" />
+                        <span><strong>Giao đến địa chỉ khác</strong></span>
+                    </label>
+                </div>
+                <div class="small mb-3"><a asp-controller="TaiKhoan" asp-action="DiaChi">Quản lý sổ địa chỉ</a></div>
+            }
+            else
+            {
+                <input type="hidden" name="DiaChiId" value="0" />
+            }
+            @Html.ValidationMessage("DiaChiId", new { @class = "text-danger" })
+
+            <div id="panelDiaChiMoi" class="border rounded p-3 mb-4 bg-white @(diaChiMoi ? "" : "d-none")">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="HoTenNguoiNhan">Họ tên người nhận</label>
+                        <input class="form-control" id="HoTenNguoiNhan" name="HoTenNguoiNhan" value="@f.HoTenNguoiNhan" maxlength="100" />
+                        @Html.ValidationMessage("HoTenNguoiNhan", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="DienThoai">Số điện thoại</label>
+                        <input class="form-control" id="DienThoai" name="DienThoai" value="@f.DienThoai" maxlength="20" inputmode="tel" />
+                        @Html.ValidationMessage("DienThoai", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="DiaChi">Địa chỉ</label>
+                        <input class="form-control" id="DiaChi" name="DiaChi" value="@f.DiaChi" maxlength="300"
+                               placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành" />
+                        @Html.ValidationMessage("DiaChi", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="LuuDiaChi" name="LuuDiaChi" value="true" @(f.LuuDiaChi ? "checked" : null) />
+                            <label class="form-check-label" for="LuuDiaChi">Lưu địa chỉ này vào sổ địa chỉ</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 2. Thanh toán ===== -->
+            <h2 class="h5">2. Phương thức thanh toán</h2>
+            <div class="d-grid gap-2 mb-2">
+                <label class="pick-card d-flex gap-2">
+                    <input class="form-check-input mt-1" type="radio" name="PhuongThucThanhToan" value="COD" checked="@(f.PhuongThucThanhToan != "ChuyenKhoan")" />
+                    <span><strong>Thanh toán khi nhận hàng (COD)</strong><br /><span class="text-muted small">Trả tiền mặt cho nhân viên giao hàng.</span></span>
+                </label>
+                <label class="pick-card d-flex gap-2">
+                    <input class="form-check-input mt-1" type="radio" name="PhuongThucThanhToan" value="ChuyenKhoan" checked="@(f.PhuongThucThanhToan == "ChuyenKhoan")" />
+                    <span><strong>Chuyển khoản ngân hàng</strong><br /><span class="text-muted small">Cửa hàng xác nhận khi nhận được tiền, sau đó mới giao hàng.</span></span>
+                </label>
+            </div>
+            @Html.ValidationMessage("PhuongThucThanhToan", new { @class = "text-danger" })
+            <div id="panelChuyenKhoan" class="bank-box mb-4 @(f.PhuongThucThanhToan == "ChuyenKhoan" ? "" : "d-none")">
+                <dl class="mb-0">
+                    <dt>Ngân hàng</dt><dd>@Model.NganHang</dd>
+                    <dt>Số tài khoản</dt><dd>@Model.SoTaiKhoan</dd>
+                    <dt>Chủ tài khoản</dt><dd>@Model.ChuTaiKhoan</dd>
+                    <dt>Nội dung chuyển khoản</dt><dd>Mã đơn hàng (hiển thị sau khi đặt hàng thành công)</dd>
+                </dl>
+            </div>
+
+            <!-- ===== 3. Ghi chú ===== -->
+            <h2 class="h5">3. Ghi chú</h2>
+            <textarea class="form-control mb-3" name="GhiChu" rows="2" maxlength="500" placeholder="Ví dụ: giao giờ hành chính">@f.GhiChu</textarea>
+        </div>
+
+        <!-- ===== Tóm tắt đơn ===== -->
+        <div class="col-lg-5">
+            <div class="summary-box sticky-summary">
+                <h2 class="h5 mb-3">Đơn hàng của bạn</h2>
+                @foreach (var d in Model.Gio.Dong)
+                {
+                    <div class="row-line small">
+                        <span>@d.Ten <span class="text-muted">× @d.SoLuong</span></span>
+                        <span class="text-nowrap">@d.ThanhTien.Vnd()</span>
+                    </div>
+                }
+                <div class="small mt-1"><a asp-controller="GioHang" asp-action="Index">Sửa giỏ hàng</a></div>
+
+                <hr />
+                <label class="form-label small mb-1" for="maGiamGia">Mã giảm giá</label>
+                <div class="input-group input-group-sm mb-1">
+                    <input class="form-control text-uppercase" id="maGiamGia" name="MaGiamGia" value="@f.MaGiamGia" maxlength="30" autocomplete="off" />
+                    <button type="button" class="btn btn-outline-secondary" id="btnApMa">Áp dụng</button>
+                </div>
+                <div id="thongBaoMa" class="small mb-2 @(Model.TamTinh.MaHopLe ? "text-success" : "text-danger")">
+                    @if (!string.IsNullOrEmpty(f.MaGiamGia)) { @Model.TamTinh.ThongBaoMa }
+                </div>
+                @Html.ValidationMessage("MaGiamGia", new { @class = "text-danger small" })
+
+                <div class="row-line"><span>Tiền hàng</span><span id="tamHang">@Model.TamTinh.TienHang.Vnd()</span></div>
+                <div class="row-line"><span>Giảm giá</span><span id="tamGiam">@(Model.TamTinh.TienGiam > 0 ? "-" + Model.TamTinh.TienGiam.Vnd() : "0 ₫")</span></div>
+                <div class="row-line"><span>Phí vận chuyển</span>
+                    <span id="tamPhi" class="@(Model.TamTinh.Phi == 0 ? "free" : "")">@(Model.TamTinh.Phi == 0 ? "Miễn phí" : Model.TamTinh.Phi.Vnd())</span></div>
+                <div class="small text-muted">Miễn phí vận chuyển cho đơn từ @Model.NguongMienPhi.Vnd().</div>
+                <div class="row-line total"><span>Tổng cộng</span><span id="tamTong" class="text-danger">@Model.TamTinh.Tong.Vnd()</span></div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 mt-3" id="btnDatHang">Đặt hàng</button>
+                <div class="small text-muted mt-2">Giá và tồn kho được kiểm tra lại ngay khi bạn bấm đặt hàng.</div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var frm = document.getElementById('frmDatHang');
+            var panelMoi = document.getElementById('panelDiaChiMoi');
+            var panelCK = document.getElementById('panelChuyenKhoan');
+
+            function capNhatPanel() {
+                var dc = frm.querySelector('input[name="DiaChiId"]:checked') || frm.querySelector('input[name="DiaChiId"]');
+                panelMoi.classList.toggle('d-none', !dc || dc.value !== '0');
+                var tt = frm.querySelector('input[name="PhuongThucThanhToan"]:checked');
+                panelCK.classList.toggle('d-none', !tt || tt.value !== 'ChuyenKhoan');
+            }
+            frm.addEventListener('change', capNhatPanel);
+            capNhatPanel();
+
+            // Áp mã giảm giá: xem trước số tiền, chưa tạo đơn
+            document.getElementById('btnApMa').addEventListener('click', function () {
+                var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                var tb = document.getElementById('thongBaoMa');
+                fetch('/dat-hang/tinh-tam', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'RequestVerificationToken': tokenInput ? tokenInput.value : '', 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ maGiamGia: document.getElementById('maGiamGia').value })
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        document.getElementById('tamHang').textContent = d.tienHang;
+                        document.getElementById('tamGiam').textContent = d.maHopLe ? '-' + d.tienGiam : '0 ₫';
+                        var phi = document.getElementById('tamPhi');
+                        phi.textContent = d.phi;
+                        phi.classList.toggle('free', d.phi === 'Miễn phí');
+                        document.getElementById('tamTong').textContent = d.tong;
+                        tb.textContent = d.thongBaoMa || '';
+                        tb.className = 'small mb-2 ' + (d.maHopLe ? 'text-success' : 'text-danger');
+                    })
+                    .catch(function () { tb.textContent = 'Không kiểm tra được mã, vui lòng thử lại.'; tb.className = 'small mb-2 text-danger'; });
+            });
+
+            // Chống bấm đặt hàng hai lần
+            frm.addEventListener('submit', function () {
+                var b = document.getElementById('btnDatHang');
+                b.disabled = true;
+                b.textContent = 'Đang xử lý...';
+            });
+        })();
+    </script>
+}

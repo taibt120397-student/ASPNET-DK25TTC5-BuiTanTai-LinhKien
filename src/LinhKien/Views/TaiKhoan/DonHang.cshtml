@@ -1,0 +1,67 @@
+@using LinhKien.Helpers
+@using LinhKien.Models
+@model LinhKien.ViewModels.DonHangListVM
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    var loc = new (string? Ma, string Ten)[]
+    {
+        (null, "Tất cả"), (TrangThaiDon.ChoXacNhan, "Chờ xác nhận"), (TrangThaiDon.DaXacNhan, "Đã xác nhận"),
+        (TrangThaiDon.DangGiao, "Đang giao"), (TrangThaiDon.HoanThanh, "Hoàn thành"), (TrangThaiDon.DaHuy, "Đã hủy")
+    };
+}
+<div class="row g-4">
+    <aside class="col-lg-3"><partial name="_TaiKhoanMenu" /></aside>
+    <section class="col-lg-9">
+        <h1 class="h3 mb-3">Đơn hàng của tôi</h1>
+        <partial name="_ThongBao" />
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            @foreach (var l in loc)
+            {
+                <a class="btn btn-sm @(Model.TrangThai == l.Ma ? "btn-primary" : "btn-outline-secondary")" href="@Model.Link(1, l.Ma)">@l.Ten</a>
+            }
+        </div>
+
+        @if (!Model.Rows.Any())
+        {
+            <div class="alert alert-light border">Chưa có đơn hàng nào. <a asp-controller="SanPham" asp-action="Index">Bắt đầu mua sắm</a>.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr><th>Mã đơn</th><th>Ngày đặt</th><th class="text-center">Số lượng</th><th class="text-end">Tổng tiền</th><th>Trạng thái</th><th>Thanh toán</th></tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var d in Model.Rows)
+                    {
+                        <tr>
+                            <td><a asp-action="ChiTietDon" asp-route-id="@d.Id" class="fw-semibold"><span class="ma-sp">@d.MaDon</span></a></td>
+                            <td class="text-nowrap">@d.NgayDat.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-center">@d.SoMon</td>
+                            <td class="text-end text-nowrap fw-semibold">@d.TongTien.Vnd()</td>
+                            <td><span class="badge @DonHangHelper.Badge(d.TrangThai)">@DonHangHelper.TenTrangThai(d.TrangThai)</span></td>
+                            <td class="small">@DonHangHelper.TenThanhToan(d.TrangThaiThanhToan)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.TongTrang > 1)
+            {
+                <nav aria-label="Phân trang">
+                    <ul class="pagination justify-content-center flex-wrap">
+                        <li class="page-item @(Model.Trang == 1 ? "disabled" : "")"><a class="page-link" href="@Model.Link(Model.Trang - 1)">«</a></li>
+                        @for (var p = 1; p <= Model.TongTrang; p++)
+                        {
+                            <li class="page-item @(p == Model.Trang ? "active" : "")"><a class="page-link" href="@Model.Link(p)">@p</a></li>
+                        }
+                        <li class="page-item @(Model.Trang == Model.TongTrang ? "disabled" : "")"><a class="page-link" href="@Model.Link(Model.Trang + 1)">»</a></li>
+                    </ul>
+                </nav>
+            }
+        }
+    </section>
+</div>

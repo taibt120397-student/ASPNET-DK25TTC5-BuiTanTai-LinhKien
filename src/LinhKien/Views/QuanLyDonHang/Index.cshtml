@@ -1,0 +1,75 @@
+@using LinhKien.Helpers
+@using LinhKien.Models
+@model LinhKien.ViewModels.DonHangListVM
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    var tabs = new (string? Ma, string Ten)[]
+    {
+        (null, "Tất cả"), (TrangThaiDon.ChoXacNhan, "Chờ xác nhận"), (TrangThaiDon.DaXacNhan, "Đã xác nhận"),
+        (TrangThaiDon.DangGiao, "Đang giao"), (TrangThaiDon.HoanThanh, "Hoàn thành"), (TrangThaiDon.DaHuy, "Đã hủy")
+    };
+    int Dem(string? ma) => ma == null ? Model.DemTheoTrangThai.Values.Sum() : Model.DemTheoTrangThai.GetValueOrDefault(ma);
+}
+
+<h1 class="h3 mb-3">Đơn hàng</h1>
+<partial name="_ThongBao" />
+
+<ul class="nav nav-pills mb-3 flex-wrap gap-1">
+    @foreach (var t in tabs)
+    {
+        <li class="nav-item">
+            <a class="nav-link py-1 @(Model.TrangThai == t.Ma ? "active" : "")" href="@Model.Link(1, t.Ma)">
+                @t.Ten <span class="badge text-bg-light border ms-1">@Dem(t.Ma)</span>
+            </a>
+        </li>
+    }
+</ul>
+
+<form method="get" class="row g-2 mb-3">
+    <input type="hidden" name="trangThai" value="@Model.TrangThai" />
+    <div class="col-md-4"><input name="tuKhoa" value="@Model.TuKhoa" class="form-control" placeholder="Mã đơn, tên người nhận hoặc số điện thoại" /></div>
+    <div class="col-6 col-md-2"><input type="date" name="tuNgay" value="@Model.TuNgay?.ToString("yyyy-MM-dd")" class="form-control" title="Từ ngày" /></div>
+    <div class="col-6 col-md-2"><input type="date" name="denNgay" value="@Model.DenNgay?.ToString("yyyy-MM-dd")" class="form-control" title="Đến ngày" /></div>
+    <div class="col-md-2 d-grid"><button class="btn btn-outline-primary" type="submit">Lọc</button></div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr><th>Mã đơn</th><th>Ngày đặt</th><th>Người nhận</th><th class="text-center">SL</th><th class="text-end">Tổng tiền</th><th>Trạng thái</th><th>Thanh toán</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var d in Model.Rows)
+        {
+            <tr>
+                <td><a asp-action="ChiTiet" asp-route-id="@d.Id" class="fw-semibold"><span class="ma-sp">@d.MaDon</span></a></td>
+                <td class="text-nowrap">@d.NgayDat.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@d.TenNguoiNhan<div class="small text-muted">@d.DienThoai</div></td>
+                <td class="text-center">@d.SoMon</td>
+                <td class="text-end text-nowrap fw-semibold">@d.TongTien.Vnd()</td>
+                <td><span class="badge @DonHangHelper.Badge(d.TrangThai)">@DonHangHelper.TenTrangThai(d.TrangThai)</span></td>
+                <td class="small">@DonHangHelper.TenPhuongThuc(d.PhuongThucThanhToan)<br />
+                    <span class="@(d.TrangThaiThanhToan == TrangThaiThanhToan.DaThanhToan ? "text-success" : "text-muted")">@DonHangHelper.TenThanhToan(d.TrangThaiThanhToan)</span></td>
+            </tr>
+        }
+        @if (!Model.Rows.Any())
+        {
+            <tr><td colspan="7" class="text-center text-muted py-4">Không có đơn hàng phù hợp.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.TongTrang > 1)
+{
+    <nav aria-label="Phân trang">
+        <ul class="pagination justify-content-center flex-wrap">
+            <li class="page-item @(Model.Trang == 1 ? "disabled" : "")"><a class="page-link" href="@Model.Link(Model.Trang - 1)">«</a></li>
+            @for (var p = 1; p <= Model.TongTrang; p++)
+            {
+                <li class="page-item @(p == Model.Trang ? "active" : "")"><a class="page-link" href="@Model.Link(p)">@p</a></li>
+            }
+            <li class="page-item @(Model.Trang == Model.TongTrang ? "disabled" : "")"><a class="page-link" href="@Model.Link(Model.Trang + 1)">»</a></li>
+        </ul>
+    </nav>
+}

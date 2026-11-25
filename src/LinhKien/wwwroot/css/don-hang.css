@@ -1,0 +1,30 @@
+/* Giao diện đơn hàng: thanh tiến trình, bảng tóm tắt đơn. Dùng chung màu với site.css. */
+.steps { display: flex; list-style: none; padding: 0; margin: 0 0 1.5rem; }
+.steps li { flex: 1; position: relative; text-align: center; font-size: .85rem; color: var(--muted); }
+.steps li::before {                       /* chấm tròn của mỗi bước */
+    content: ""; display: block; width: 18px; height: 18px; margin: 0 auto .4rem;
+    border-radius: 50%; background: #fff; border: 2px solid #b9c7c0; position: relative; z-index: 1;
+}
+.steps li::after {                        /* thanh nối giữa các bước */
+    content: ""; position: absolute; top: 8px; left: calc(-50% + 9px); right: calc(50% + 9px);
+    height: 2px; background: #cdd9d3;
+}
+.steps li:first-child::after { display: none; }
+.steps li.done { color: var(--ink); }
+.steps li.done::before { background: var(--green); border-color: var(--green); }
+.steps li.done::after { background: var(--green); }
+.steps li.current { font-weight: 650; color: var(--green); }
+.steps li.current::before { box-shadow: 0 0 0 4px rgba(10, 107, 80, .18); }
+.steps.cancelled li::before { border-color: #c9d1cd; background: #eef1ef; }
+
+.summary-box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem; }
+.summary-box .row-line { display: flex; justify-content: space-between; gap: 1rem; padding: .2rem 0; }
+.summary-box .total { font-size: 1.2rem; font-weight: 700; border-top: 1px dashed var(--line); margin-top: .5rem; padding-top: .6rem; }
+.summary-box .free { color: var(--green); font-weight: 600; }
+@media (min-width: 992px) { .sticky-summary { position: sticky; top: 1rem; } }
+
+.pick-card { border: 1px solid var(--line); border-radius: var(--radius); padding: .75rem .9rem; background: var(--surface); cursor: pointer; }
+.pick-card:has(input:checked) { border-color: var(--green); box-shadow: 0 0 0 3px rgba(10, 107, 80, .12); }
+.bank-box { background: #f7faf8; border: 1px dashed #9cc4b4; border-radius: var(--radius); padding: .8rem 1rem; }
+.bank-box dt { font-weight: 500; color: var(--muted); }
+.bank-box dd { font-family: var(--mono); font-weight: 600; margin-bottom: .3rem; }

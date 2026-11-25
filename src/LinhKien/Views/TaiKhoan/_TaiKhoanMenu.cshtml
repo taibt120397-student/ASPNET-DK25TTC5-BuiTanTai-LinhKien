@@ -1,0 +1,9 @@
+@{
+    var active = ViewData["Active"] as string ?? "";
+}
+<div class="list-group mb-3">
+    <a class="list-group-item list-group-item-action @(active == "hoso" ? "active" : "")" asp-controller="TaiKhoan" asp-action="Index">Hồ sơ cá nhân</a>
+    <a class="list-group-item list-group-item-action @(active == "don" ? "active" : "")" asp-controller="TaiKhoan" asp-action="DonHang">Đơn hàng của tôi</a>
+    <a class="list-group-item list-group-item-action @(active == "diachi" ? "active" : "")" asp-controller="TaiKhoan" asp-action="DiaChi">Sổ địa chỉ</a>
+    <a class="list-group-item list-group-item-action" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Đổi mật khẩu</a>
+</div>

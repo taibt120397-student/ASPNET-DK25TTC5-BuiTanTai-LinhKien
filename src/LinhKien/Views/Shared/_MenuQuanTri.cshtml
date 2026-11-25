@@ -7,6 +7,12 @@
             <li><a class="dropdown-item" asp-controller="QuanLySanPham" asp-action="Index">Sản phẩm</a></li>
             <li><a class="dropdown-item" asp-controller="QuanLyDanhMuc" asp-action="Index">Danh mục</a></li>
             <li><a class="dropdown-item" asp-controller="QuanLyThuongHieu" asp-action="Index">Thương hiệu</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" asp-controller="QuanLyDonHang" asp-action="Index">Đơn hàng</a></li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li><a class="dropdown-item" asp-controller="QuanLyMaGiamGia" asp-action="Index">Mã giảm giá</a></li>
+            }
         </ul>
     </li>
 }

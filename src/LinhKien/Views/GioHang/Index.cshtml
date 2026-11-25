@@ -88,7 +88,7 @@ else
 
     <div class="d-flex justify-content-between">
         <a asp-controller="SanPham" asp-action="Index" class="btn btn-outline-secondary">Tiếp tục mua hàng</a>
-        @* Tuần 4: thay nút này bằng liên kết sang trang đặt hàng *@
-        <button type="button" class="btn btn-primary" disabled title="Chức năng đặt hàng sẽ có ở tuần 4">Đặt hàng</button>
+        <a asp-controller="DatHang" asp-action="Index" class="btn btn-primary btn-lg @(Model.CoCanhBao ? "disabled" : "")"
+           aria-disabled="@(Model.CoCanhBao ? "true" : "false")" tabindex="@(Model.CoCanhBao ? -1 : 0)">Tiến hành đặt hàng</a>
     </div>
 }

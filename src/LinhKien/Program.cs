@@ -9,7 +9,9 @@ builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 	builder.Services.AddScoped<LinhKien.Services.IImageService, LinhKien.Services.ImageService>();
 	builder.Services.AddScoped<LinhKien.Services.IGioHangService, LinhKien.Services.GioHangService>();
-builder.Services.AddDefaultIdentity<ApplicationUser>(o =>
+	builder.Services.Configure<LinhKien.Services.CuaHangOptions>(builder.Configuration.GetSection("CuaHang"));
+	builder.Services.AddScoped<LinhKien.Services.IDonHangService, LinhKien.Services.DonHangService>();
+	builder.Services.AddDefaultIdentity<ApplicationUser>(o =>
 {
     o.Password.RequiredLength = 6;
     o.Password.RequireNonAlphanumeric = false;
@@ -46,5 +48,10 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await LinhKien.Data.CatalogSeeder.SeedAsync(db);
+}
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await LinhKien.Data.OrderSeeder.SeedAsync(db);
 }
 app.Run();

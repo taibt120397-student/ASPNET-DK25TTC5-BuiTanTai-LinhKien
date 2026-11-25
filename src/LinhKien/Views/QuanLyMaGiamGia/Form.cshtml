@@ -1,0 +1,67 @@
+@model LinhKien.ViewModels.MaGiamGiaFormVM
+@{
+    var moi = Model.Id == 0;
+    ViewData["Title"] = moi ? "Tạo mã giảm giá" : "Sửa mã giảm giá";
+}
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+<form asp-action="@(moi ? "Create" : "Edit")" asp-route-id="@(moi ? null : Model.Id)" method="post" class="col-lg-6 p-0">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Ma" class="form-label"></label>
+        <input asp-for="Ma" class="form-control text-uppercase" autofocus />
+        <span asp-validation-for="Ma" class="text-danger"></span>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label asp-for="LaPhanTram" class="form-label"></label>
+            <select name="LaPhanTram" id="LaPhanTram" class="form-select">
+                <option value="true" selected="@Model.LaPhanTram">Giảm theo phần trăm (%)</option>
+                <option value="false" selected="@(!Model.LaPhanTram)">Giảm số tiền cố định (₫)</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="GiaTriGiam" class="form-label"></label>
+            <input asp-for="GiaTriGiam" type="number" min="1" step="1" class="form-control" />
+            <span asp-validation-for="GiaTriGiam" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DonToiThieu" class="form-label"></label>
+        <input asp-for="DonToiThieu" type="number" min="0" step="1000" class="form-control" />
+        <span asp-validation-for="DonToiThieu" class="text-danger"></span>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label asp-for="NgayBatDau" class="form-label"></label>
+            <input asp-for="NgayBatDau" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" />
+            <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="NgayKetThuc" class="form-label"></label>
+            <input asp-for="NgayKetThuc" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" />
+            <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+            <div class="form-text">Mã dùng được đến hết ngày này.</div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SoLanToiDa" class="form-label"></label>
+        <input asp-for="SoLanToiDa" type="number" min="1" class="form-control" />
+        <span asp-validation-for="SoLanToiDa" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="KichHoat" class="form-check-input" />
+        <label asp-for="KichHoat" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,45 @@
+@using LinhKien.Helpers
+@model List<LinhKien.ViewModels.MaGiamGiaRowVM>
+@{
+    ViewData["Title"] = "Quản lý mã giảm giá";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Mã giảm giá</h1>
+    <a class="btn btn-primary" asp-action="Create">+ Tạo mã</a>
+</div>
+<partial name="_ThongBao" />
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr><th>Mã</th><th>Giảm</th><th class="text-end">Đơn tối thiểu</th><th>Hiệu lực</th><th class="text-center">Đã dùng</th><th>Tình trạng</th><th class="text-end">Thao tác</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var m in Model)
+        {
+            var tt = m.TinhTrang;
+            <tr>
+                <td><span class="ma-sp fw-bold">@m.Ma</span></td>
+                <td>@(m.LaPhanTram ? m.GiaTriGiam.ToString("0") + "%" : m.GiaTriGiam.Vnd())</td>
+                <td class="text-end text-nowrap">@m.DonToiThieu.Vnd()</td>
+                <td class="small text-nowrap">@m.NgayBatDau.ToString("dd/MM/yyyy") – @m.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">@m.SoLanDaDung / @m.SoLanToiDa</td>
+                <td><span class="badge @(tt == "Đang hiệu lực" ? "text-bg-success" : "text-bg-secondary")">@tt</span></td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@m.Id">Sửa</a>
+                    <form asp-action="Khoa" asp-route-id="@m.Id" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-outline-warning" type="submit">@(m.KichHoat ? "Khóa" : "Mở khóa")</button>
+                    </form>
+                    <form asp-action="Delete" asp-route-id="@m.Id" method="post" class="d-inline" onsubmit="return confirm('Xóa mã @m.Ma?');">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="7" class="text-center text-muted py-4">Chưa có mã giảm giá nào.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
