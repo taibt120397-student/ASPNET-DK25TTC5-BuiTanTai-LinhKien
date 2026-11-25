@@ -55,15 +55,15 @@ Mã nguồn đã được đẩy lên GitHub với commit "Them dat hang, sp_Dat
 
 ## 4. Kết quả đạt được và tự kiểm tra
 
-- [ ] Đặt hàng thành công: giỏ trống, tồn kho giảm, mã đơn đúng định dạng
-- [ ] Phí vận chuyển đúng (30.000₫, miễn phí từ 500.000₫)
-- [ ] Mã giảm giá: dùng được mã hợp lệ; báo lỗi đúng với mã hết hạn, bị khóa, chưa đạt đơn tối thiểu
-- [ ] Hai khách cùng mua sản phẩm cuối cùng: chỉ một đơn thành công
-- [ ] Khách hủy đơn chưa giao: tồn kho được hoàn lại; đơn đang giao không hủy được
-- [ ] Nhân viên chuyển trạng thái đúng thứ tự, đơn hoàn thành không sửa được
-- [ ] Đơn chuyển khoản chưa xác nhận tiền thì không chuyển sang đang giao được
-- [ ] In phiếu giao hàng
-- [ ] Khách không vào được trang quản trị; nhân viên không vào được trang mã giảm giá
+- [x] Đặt hàng thành công: giỏ trống, tồn kho giảm, mã đơn đúng định dạng
+- [x] Phí vận chuyển đúng (30.000₫, miễn phí từ 500.000₫)
+- [x] Mã giảm giá: dùng được mã hợp lệ; báo lỗi đúng với mã hết hạn, bị khóa, chưa đạt đơn tối thiểu
+- [x] Hai khách cùng mua sản phẩm cuối cùng: chỉ một đơn thành công
+- [x] Khách hủy đơn chưa giao: tồn kho được hoàn lại; đơn đang giao không hủy được
+- [x] Nhân viên chuyển trạng thái đúng thứ tự, đơn hoàn thành không sửa được
+- [x] Đơn chuyển khoản chưa xác nhận tiền thì không chuyển sang đang giao được
+- [x] In phiếu giao hàng
+- [x] Khách không vào được trang quản trị; nhân viên không vào được trang mã giảm giá
 
 **Hình ảnh minh chứng** (thêm ảnh vào thư mục `docs/` rồi chỉnh tên file cho khớp):
 
